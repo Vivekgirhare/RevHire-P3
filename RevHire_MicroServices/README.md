@@ -1,6 +1,24 @@
-# RevHire Microservices — Spring Cloud Integration
+# 🧩 RevHire - Microservices Recruitment Platform
 
-## Architecture Overview
+RevHire is a scalable **microservices-based recruitment system** built using **Spring Boot**. It follows modern backend architecture with API Gateway, secure authentication, and inter-service communication.
+
+---
+
+## 🚀 Features
+
+- 🔐 JWT-based Authentication & Authorization
+- 🌐 API Gateway (centralized routing)
+- 📄 Application Management Service
+- 👤 Profile Service
+- 🔗 Inter-service communication using OpenFeign
+- ⚡ Rate Limiting & Security Filters
+- 🧱 Microservices architecture (loosely coupled)
+- 🗄️ Separate database for each service
+
+---
+
+## 🏗️ Architecture
+
 
 ```
                           ┌─────────────────────┐
