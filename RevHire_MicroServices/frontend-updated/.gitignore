@@ -1,0 +1,56 @@
+############################
+# Node
+############################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+############################
+# Angular build output
+############################
+dist/
+.tmp/
+.out-tsc/
+build/
+
+############################
+# Angular cache
+############################
+.angular/
+
+############################
+# Environment files (if you keep secrets)
+############################
+src/environments/environment.local.ts
+src/environments/environment.prod.ts
+
+############################
+# IDE - IntelliJ
+############################
+.idea/
+*.iws
+*.iml
+*.ipr
+
+############################
+# IDE - VS Code
+############################
+.vscode/
+
+############################
+# OS Files
+############################
+.DS_Store
+Thumbs.db
+
+############################
+# Coverage reports
+############################
+coverage/
+
+############################
+# Misc
+############################
+*.log

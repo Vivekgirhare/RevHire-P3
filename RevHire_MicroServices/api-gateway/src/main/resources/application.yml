@@ -1,0 +1,174 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        # AUTH SERVICE - open (no JWT required)
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: authService
+                fallbackUri: forward:/fallback/auth
+
+        # JOB SERVICE - public GET routes
+        - id: job-service-public-search
+          uri: lb://job-service
+          predicates:
+            - Path=/api/jobs/search
+            - Method=GET
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: jobService
+                fallbackUri: forward:/fallback/job
+
+        - id: job-service-public-detail
+          uri: lb://job-service
+          predicates:
+            - Path=/api/jobs/{id}
+            - Method=GET
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: jobService
+                fallbackUri: forward:/fallback/job
+
+        # JOB SERVICE - protected routes (JWT required)
+        - id: job-service-protected
+          uri: lb://job-service
+          predicates:
+            - Path=/api/jobs/**
+          filters:
+            - JwtAuthFilter
+            - name: CircuitBreaker
+              args:
+                name: jobService
+                fallbackUri: forward:/fallback/job
+
+        # APPLICATION SERVICE
+        - id: application-service
+          uri: lb://application-service
+          predicates:
+            - Path=/api/applications/**
+          filters:
+            - JwtAuthFilter
+            - name: CircuitBreaker
+              args:
+                name: applicationService
+                fallbackUri: forward:/fallback/application
+
+        # PROFILE SERVICE
+        - id: profile-service
+          uri: lb://profile-service
+          predicates:
+            - Path=/api/profile/**
+          filters:
+            - JwtAuthFilter
+            - name: CircuitBreaker
+              args:
+                name: profileService
+                fallbackUri: forward:/fallback/profile
+
+        # COMPANY SERVICE
+        - id: company-service
+          uri: lb://company-service
+          predicates:
+            - Path=/api/company/**
+          filters:
+            - JwtAuthFilter
+            - name: CircuitBreaker
+              args:
+                name: companyService
+                fallbackUri: forward:/fallback/company
+
+        # NOTIFICATION SERVICE
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - JwtAuthFilter
+            - name: CircuitBreaker
+              args:
+                name: notificationService
+                fallbackUri: forward:/fallback/notification
+
+jwt:
+  secret: revhire_super_secret_key_2024_very_long_and_secure_jwt_secret_key_minimum_256_bits
+
+# Resilience4j Circuit Breaker for API Gateway
+resilience4j:
+  circuitbreaker:
+    instances:
+      authService:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+      jobService:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+      applicationService:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+      profileService:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+      companyService:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+      notificationService:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        automatic-transition-from-open-to-half-open-enabled: true
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    com.revhire: DEBUG
+    org.springframework.cloud.gateway: INFO

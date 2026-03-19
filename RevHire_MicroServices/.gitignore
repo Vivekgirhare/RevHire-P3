@@ -1,0 +1,25 @@
+# Spring Boot
+target/
+*.class
+*.jar
+*.war
+
+# Logs
+*.log
+
+# Node
+node_modules/
+
+# Angular build
+dist/
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
